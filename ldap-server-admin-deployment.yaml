@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: ldap-server-admin
+  name: ldap-server-admin
+spec:
+  selector:
+    matchLabels:
+      name: ldap-server-admin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: ldap-server-admin
+    spec:
+      containers:
+      - env:
+        - name: PHPLDAPADMIN_HTTPS
+          value: "false"
+        - name: PHPLDAPADMIN_LDAP_HOSTS
+          value: ldap-server.ldap.svc.cluster.local
+        image: osixia/phpldapadmin:0.7.2
+        name: ldap-server-admin
+        ports:
+        - containerPort: 80
+        resources: {}
+      restartPolicy: Always
+

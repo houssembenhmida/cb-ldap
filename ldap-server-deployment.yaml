@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: ldap-server
+  name: ldap-server
+spec:
+  selector:
+    matchLabels:
+      name: ldap-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: ldap-server
+    spec:
+      containers:
+      - env:
+        - name: LDAP_ADMIN_PASSWORD
+          value: test1234
+        - name: LDAP_BASE_DN
+          value: dc=acme,dc=org
+        image: carlosrodlop/ooldap.debian.ub:main
+        name: ldap-server
+        ports:
+        - containerPort: 389
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/ldap
+          name: ldap-data
+        - mountPath: /etc/ldap/slapd.d
+          name: ldap-config
+      restartPolicy: Always
+      volumes:
+      - name: ldap-data
+        persistentVolumeClaim:
+          claimName: ldap-data
+      - name: ldap-config
+        persistentVolumeClaim:
+          claimName: ldap-config
+
